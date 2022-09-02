@@ -1,0 +1,97 @@
+#include "libraries.h"
+
+str ROOT_PATH;
+str PREV_PATH;
+
+// str get_current_path()
+// {
+//     str cwd = calloc(PATHLENGTH_MAX, sizeof(char));
+//     if (!getcwd(cwd, PATHLENGTH_MAX))
+//     {
+//         exit(1);
+//         // throw_fatal_error("Unable to get current working directory path");
+//     }
+//     return cwd;
+// }
+
+str long_path(str short_path)
+{
+    if (!prefix("~", short_path))
+    {
+        return short_path;
+    }
+
+    str longpath = calloc(strlen(short_path) + strlen(ROOT_PATH) + 3, sizeof(char));
+
+    strcat(longpath, ROOT_PATH);
+    strcat(longpath, "/");
+    strcat(longpath, short_path+1);
+
+    // free(short_path);
+    short_path = longpath;
+
+    return longpath;
+}
+
+str short_path(str long_path)
+{
+    if (!prefix(ROOT_PATH, long_path))
+    {
+        return long_path;
+    }
+
+    str shortpath = calloc(PATHLENGTH_MAX, sizeof(char));
+    strcat(shortpath, "~");
+    strcat(shortpath, long_path + strlen(ROOT_PATH));
+
+    // free(long_path);
+    long_path = shortpath;
+
+    return shortpath;
+}
+
+str display_path(bool full)
+{
+    if (strlen(ROOT_PATH) == 0)
+    {
+        set_root_path();
+    }
+    str path = calloc(PATHLENGTH_MAX, sizeof(char));
+
+    if (!getcwd(path, PATHLENGTH_MAX))
+    {
+        exit(1);
+    }
+
+    if (full || !prefix(ROOT_PATH, path))
+    {
+        return path;
+    }
+
+    return short_path(path);
+}
+
+void set_root_path()
+{
+    // if (ROOT_PATH && ROOT_PATH[0] != '\0')
+    //     free(ROOT_PATH);
+    
+    str path = calloc(PATHLENGTH_MAX, sizeof(char));
+
+    if (!getcwd(path, PATHLENGTH_MAX))
+    {
+        exit(1);
+    }
+
+    ROOT_PATH = path;
+}
+
+void set_prev_path(str prev_path)
+{
+    PREV_PATH = prev_path;
+}
+
+str get_prev_path()
+{
+    return PREV_PATH;
+}
