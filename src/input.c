@@ -16,6 +16,8 @@ void command_process(str command)
         }
         else if (!strcmp(token, "pwd"))
         {
+            if (strtok(NULL, delimit))
+                exit(1);
             addHist("pwd");
             pwd();
             return;
@@ -90,6 +92,14 @@ void command_process(str command)
             addHist(hist);
 
             ls(no_args, args);
+            return;
+        }
+        else if (!strcmp(token, "history"))
+        {
+            if (strtok(NULL, delimit))
+                exit(1);
+            history();
+            addHist("history");
             return;
         }
     }

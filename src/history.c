@@ -1,6 +1,6 @@
 #include "libraries.h"
 
-static history localHist;
+static hist localHist;
 
 void setupHist()
 {
@@ -58,4 +58,17 @@ void writeHist()
     // fputs(localHist.entries[(i + localHist.last_added) % MAX_HIST_SIZE], fp);
 
     fclose(fp);
+}
+
+void history()
+{
+    setupHist();
+    int i = (localHist.no_entries < MAX_HIST_SIZE) ? 0 : localHist.last_added + 1;
+    int j = (localHist.no_entries < HIST_DISPLAY) ? 0 : localHist.last_added - 9;
+
+    for (; j < localHist.no_entries; ++j)
+    {
+        printf("%s", localHist.entries[j]);
+        i++;
+    }
 }
