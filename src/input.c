@@ -8,7 +8,7 @@ void command_process(str command)
 
     if (token != NULL)
     {
-        if (!strcmp(token, "exit"))
+        if (!strcmp(token, "exit") || !strcmp(token, "quit"))
             exit(0);
 
         else if (!strcmp(token, "pwd"))
@@ -30,10 +30,10 @@ void command_process(str command)
         else if (!strcmp(token, "cd"))
         {
             token = strtok(NULL, delimit);
-            
-            if(strtok(NULL, delimit))
+
+            if (strtok(NULL, delimit))
                 exit(1);
-            
+
             if (token == NULL)
                 cd("~");
             else
@@ -51,7 +51,19 @@ void command_process(str command)
                 pinfo(0);
             else
                 pinfo((int)atoi(token));
-            
+
+            return;
+        }
+        else if (!strcmp(token, "ls"))
+        {
+            str args[INPUTLENGTH_MAX];
+            int no_args = 0;
+            while ((token = strtok(NULL, delimit)) != NULL)
+            {
+                args[no_args++] = token;
+            }
+
+            ls(no_args, args);
             return;
         }
     }

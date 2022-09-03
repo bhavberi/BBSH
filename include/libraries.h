@@ -12,6 +12,9 @@
 #include <unistd.h>
 #include <ctype.h>
 #include <math.h>
+#include <dirent.h>
+#include <linux/limits.h>
+#include <time.h>
 
 // Programmer Defined Libraries
 
