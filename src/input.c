@@ -9,10 +9,14 @@ void command_process(str command)
     if (token != NULL)
     {
         if (!strcmp(token, "exit") || !strcmp(token, "quit"))
+        {
+            addHist("exit");
+            writeHist();
             exit(0);
-
+        }
         else if (!strcmp(token, "pwd"))
         {
+            addHist("pwd");
             pwd();
             return;
         }
@@ -20,10 +24,15 @@ void command_process(str command)
         {
             str sentence[INPUTLENGTH_MAX];
             int no_words = 0;
+            str hist = calloc(INPUTLENGTH_MAX, sizeof(char));
+            strcat(hist, "echo");
             while ((token = strtok(NULL, delimit)) != NULL)
             {
                 sentence[no_words++] = token;
+                strcat(hist, " ");
+                strcat(hist, token);
             }
+            addHist(hist);
             echo(no_words, sentence);
             return;
         }
@@ -33,6 +42,12 @@ void command_process(str command)
 
             if (strtok(NULL, delimit))
                 exit(1);
+
+            str hist = calloc(INPUTLENGTH_MAX, sizeof(char));
+            strcat(hist, "cd");
+            strcat(hist, " ");
+            strcat(hist, token);
+            addHist(hist);
 
             if (token == NULL)
                 cd("~");
@@ -47,6 +62,12 @@ void command_process(str command)
             if (strtok(NULL, delimit))
                 exit(1);
 
+            str hist = calloc(INPUTLENGTH_MAX, sizeof(char));
+            strcat(hist, "pinfo");
+            strcat(hist, " ");
+            strcat(hist, token);
+            addHist(hist);
+
             if (token == NULL)
                 pinfo(0);
             else
@@ -58,10 +79,15 @@ void command_process(str command)
         {
             str args[INPUTLENGTH_MAX];
             int no_args = 0;
+            str hist = calloc(INPUTLENGTH_MAX, sizeof(char));
+            strcat(hist, "ls");
             while ((token = strtok(NULL, delimit)) != NULL)
             {
                 args[no_args++] = token;
+                strcat(hist, " ");
+                strcat(hist, token);
             }
+            addHist(hist);
 
             ls(no_args, args);
             return;

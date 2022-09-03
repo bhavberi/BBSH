@@ -23,6 +23,7 @@
 #include "helpers.h"
 #include "input.h"
 #include "commands.h"
+#include "history.h"
 
 #ifndef _LIBRARIES_H_
 #define _LIBRARIES_H_
