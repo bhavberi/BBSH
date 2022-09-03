@@ -4,6 +4,8 @@ void command_process(str command)
 {
     char delimit[] = " \t\r\n\v\f";
 
+    str command1 = strdup(command);
+
     str token = strtok(command, delimit);
 
     if (token != NULL)
@@ -20,7 +22,6 @@ void command_process(str command)
                 exit(1);
             addHist("pwd");
             pwd();
-            return;
         }
         else if (!strcmp(token, "echo"))
         {
@@ -36,7 +37,6 @@ void command_process(str command)
             }
             addHist(hist);
             echo(no_words, sentence);
-            return;
         }
         else if (!strcmp(token, "cd"))
         {
@@ -55,7 +55,6 @@ void command_process(str command)
                 cd("~");
             else
                 cd(token);
-            return;
         }
         else if (!strcmp(token, "pinfo"))
         {
@@ -74,8 +73,6 @@ void command_process(str command)
                 pinfo(0);
             else
                 pinfo((int)atoi(token));
-
-            return;
         }
         else if (!strcmp(token, "ls"))
         {
@@ -92,7 +89,6 @@ void command_process(str command)
             addHist(hist);
 
             ls(no_args, args);
-            return;
         }
         else if (!strcmp(token, "history"))
         {
@@ -100,9 +96,14 @@ void command_process(str command)
                 exit(1);
             history();
             addHist("history");
+        }
+        else
+        {
             return;
         }
     }
+
+    free(command1);
 }
 
 void input()

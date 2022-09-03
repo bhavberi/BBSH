@@ -59,3 +59,26 @@ str_array split(str s1, str delimit, int *token_count)
 
     return tokens;
 }
+
+str replace(str s, char to_replace, str by_replace)
+{
+    s = strip(s);
+
+    int no_chars = 0;
+    size_t l = strlen(s);
+    for (int i = 0; i < l; ++i)
+        no_chars += (to_replace == s[i]);
+
+    str new = calloc(strlen(s) + no_chars + 2, sizeof(char));
+    int iter = 0;
+
+    for (int i = 0; i < l; ++i)
+    {
+        if (to_replace == s[i])
+            strcat(new, by_replace);
+        else
+            new[strlen(new)] = s[i];
+    }
+
+    return new;
+}

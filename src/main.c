@@ -6,7 +6,7 @@ int main()
     setupHist();
 
     int no_of_done = 0;
-
+    replace("sleep 5 & sleep 2 & pwd; sleep 8 & exit;", '&', "&;");
     while (true)
     {
         setbuf(stdout, NULL);
@@ -15,7 +15,7 @@ int main()
 
         // if (no_of_done >= 10)
         // {
-            writeHist();
+        writeHist();
         //     no_of_done = 0;
         // }
     }
