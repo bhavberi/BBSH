@@ -3,17 +3,6 @@
 str ROOT_PATH;
 str PREV_PATH;
 
-// str get_current_path()
-// {
-//     str cwd = calloc(PATHLENGTH_MAX, sizeof(char));
-//     if (!getcwd(cwd, PATHLENGTH_MAX))
-//     {
-//         exit(1);
-//         // throw_fatal_error("Unable to get current working directory path");
-//     }
-//     return cwd;
-// }
-
 str long_path(str short_path)
 {
     if (!prefix("~", short_path))
@@ -25,7 +14,7 @@ str long_path(str short_path)
 
     strcat(longpath, ROOT_PATH);
     strcat(longpath, "/");
-    strcat(longpath, short_path+1);
+    strcat(longpath, short_path + 1);
 
     // free(short_path);
     short_path = longpath;
@@ -75,13 +64,16 @@ void set_root_path()
 {
     // if (ROOT_PATH && ROOT_PATH[0] != '\0')
     //     free(ROOT_PATH);
-    
+
     str path = calloc(PATHLENGTH_MAX, sizeof(char));
 
     if (!getcwd(path, PATHLENGTH_MAX))
     {
         exit(1);
     }
+
+    if (ROOT_PATH)
+        free(ROOT_PATH);
 
     ROOT_PATH = path;
 }

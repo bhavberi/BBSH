@@ -24,3 +24,9 @@ void printPrompt()
 
     printf("<%s%s%s:%s> ", colour(BOLD,colour(GREEN, username)), colour(BOLD,colour(GREEN, "@")), colour(BOLD,colour(GREEN, hostname)), colour(BLUE, display_path(0)));
 }
+
+void printPrompt_time(str to_print)
+{
+    printPrompt();
+    printf("\b\b%s ", colour(BLUE, to_print));
+}

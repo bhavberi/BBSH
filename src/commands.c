@@ -94,12 +94,19 @@ void pinfo(int pid)
     printf("process status : %s%c\n", status, back_fore);
     printf("memory : %s\n", memory);
     printf("executable path : %s\n", exe);
+
+    free(str_pid);
+    free(exe);
+    free(exe_path);
+    free(stat_path);
+    free(stat_buf);
 }
 
 void ls(int no_words, str args[])
 {
     int dir_count = 0;
-    str *dirs = calloc(no_words, sizeof(str));
+    str *dirs = calloc(no_words + 1, sizeof(str));
+    assert(dirs != NULL);
 
     int a = 0;
     int l = 0;
@@ -164,7 +171,8 @@ void ls(int no_words, str args[])
                 continue;
 
             struct stat stats;
-            str path = calloc(strlen(dirs[i]) + strlen(entry->d_name) + 2, sizeof(char));
+            str path = calloc(strlen(dirs[i]) + strlen(entry->d_name) + 10, sizeof(char));
+            assert(path != NULL);
             sprintf(path, "%s/%s", dirs[i], entry->d_name);
 
             if (lstat(path, &stats) == 0)
@@ -187,10 +195,10 @@ void ls(int no_words, str args[])
 
                 total_block_size += stats.st_blocks;
 
-                col_entries[j].hls = calloc(16, sizeof(char));
+                col_entries[j].hls = calloc(33, sizeof(char));
                 sprintf(col_entries[j].hls, "%lu", stats.st_nlink);
 
-                col_entries[j].size = calloc(16, sizeof(char));
+                col_entries[j].size = calloc(33, sizeof(char));
                 sprintf(col_entries[j].size, "%ld", stats.st_size);
 
                 str file_modified_format = "%b %d %R";
@@ -200,11 +208,13 @@ void ls(int no_words, str args[])
                     file_modified_format = "%b %d  %Y";
                 }
 
-                str file_modified = calloc(32, sizeof(char));
-                strftime(file_modified, 32, file_modified_format,
+                str file_modified = calloc(33, sizeof(char));
+                strftime(file_modified, 33, file_modified_format,
                          localtime((long *)&stats.st_mtim));
 
-                str file_perms = calloc(16, sizeof(char));
+                str file_perms = calloc(17, sizeof(char));
+                // sprintf(file_perms, "%s%s%s%s%s%s%s%s%s", (stats.st_mode & S_IRUSR) ? "r" : "-", (stats.st_mode & S_IWUSR) ? "w" : "-", (stats.st_mode & S_IXUSR) ? "x" : "-", (stats.st_mode & S_IRGRP) ? "r" : "-", (stats.st_mode & S_IWGRP) ? "w" : "-", (stats.st_mode & S_IXGRP) ? "x" : "-", (stats.st_mode & S_IROTH) ? "r" : "-", (stats.st_mode & S_IWOTH) ? "w" : "-", (stats.st_mode & S_IXOTH) ? "x" : "-");
+
                 strcat(file_perms, (stats.st_mode & S_IRUSR) ? "r" : "-");
                 strcat(file_perms, (stats.st_mode & S_IWUSR) ? "w" : "-");
                 strcat(file_perms, (stats.st_mode & S_IXUSR) ? "x" : "-");
@@ -215,27 +225,35 @@ void ls(int no_words, str args[])
                 strcat(file_perms, (stats.st_mode & S_IWOTH) ? "w" : "-");
                 strcat(file_perms, (stats.st_mode & S_IXOTH) ? "x" : "-");
 
-                str file_link = "";
+                char file_link[PATHLENGTH_MAX] = "0";
                 if (file_type[0] == 'l')
                 {
-                    file_link = calloc(PATH_MAX, sizeof(char));
-                    if (readlink(path, file_link, PATH_MAX) == -1)
+                    // file_link = malloc(PATHLENGTH_MAX* sizeof(char));
+                    assert(file_link != NULL);
+                    if (readlink(path, file_link, PATHLENGTH_MAX) == -1)
                     {
                         // exit(throw_custom_error("ls: unable to read symlink pathname", -1));
                         exit(1);
                     }
                 }
 
-                col_entries[j].type_perms = calloc(strlen(file_type) + strlen(file_perms), sizeof(char));
+                col_entries[j].type_perms = calloc(strlen(file_type) + strlen(file_perms) + 5, sizeof(char));
+                assert(col_entries[j].type_perms);
                 sprintf(col_entries[j].type_perms, "%s%s", file_type, file_perms);
 
-                str file_name_link = calloc(5 + strlen(col_entries[j].colored_name) + PATHLENGTH_MAX, sizeof(char));
+                str file_name_link = calloc(5 + strlen(col_entries[j].colored_name) + PATHLENGTH_MAX + 5, sizeof(char));
+                assert(file_link != NULL);
                 strcat(file_name_link, col_entries[j].colored_name);
                 strcat(file_name_link, file_type[0] == 'l' ? " -> " : "");
                 strcat(file_name_link, file_link);
 
+                // printf("SOME done %s\n",entry->d_name);
+
                 col_entries[j].owner = getpwuid(stats.st_uid)->pw_name;
                 col_entries[j].group = getpwuid(stats.st_gid)->pw_name;
+
+                // printf("SOME MORE done\n");
+
                 col_entries[j].modified = file_modified;
                 col_entries[j].name_link = file_name_link;
 
@@ -279,7 +297,7 @@ void ls(int no_words, str args[])
         }
     }
 
-    free(dirs);
+    // free(dirs);
 }
 
 void foreground(str command)
@@ -296,6 +314,8 @@ void foreground(str command)
     }
     tokens[no_tokens++] = NULL;
 
+    time_t start = time(NULL);
+
     pid_t pid = fork();
     if (pid < 0)
         exit(1);
@@ -304,18 +324,25 @@ void foreground(str command)
     {
         if (execvp(tokens[0], tokens))
         {
-            char *errmsg = calloc(128, sizeof(char));
+            str errmsg = calloc(128, sizeof(char));
             sprintf(errmsg, "%s", tokens[0]);
+            free(errmsg);
             // printf("%s,%s,%s\nError: %d\n", tokens[0], tokens[1],tokens[2], pid);
             exit(1);
         }
-        else
-        {
-            printf("%s,%s,%s\nError: %d\n", tokens[0], tokens[1], tokens[2], pid);
-        }
+        // else
+        // {
+        //     printf("%s,%s,%s\nError: %d\n", tokens[0], tokens[1], tokens[2], pid);
+        // }
     }
     else
         wait(NULL);
+
+    time_t end = time(NULL);
+    long time_spent = end - start;
+    str to_print = calloc(200, sizeof(char));
+    sprintf(to_print, "took %lds", time_spent);
+    main_loop(true, to_print);
 }
 
 void background(str command)
@@ -342,9 +369,10 @@ void background(str command)
         setpgid(0, 0);
         if (execvp(tokens[0], tokens))
         {
-            char *errmsg = calloc(128, sizeof(char));
+            str errmsg = calloc(128, sizeof(char));
             sprintf(errmsg, "%s", tokens[0]);
             printf("%s\n", errmsg);
+            free(errmsg);
             // printf("%s,%s,%s\nError: %d\n", tokens[0], tokens[1], tokens[2], pid);
             exit(1);
         }

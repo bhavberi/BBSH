@@ -7,7 +7,7 @@ void command_process(str command)
 
     char delimit[] = " \t\r\n\v\f";
 
-    str command_copy = strdup(command);
+    str command_copy = str_copy(command);
 
     str token = strtok(command, delimit);
 
@@ -38,6 +38,7 @@ void command_process(str command)
             }
             addHist(hist);
             echo(no_words, sentence);
+            free(hist);
         }
         else if (!strcmp(token, "cd"))
         {
@@ -57,6 +58,7 @@ void command_process(str command)
                 strcat(hist, token);
             }
             addHist(hist);
+            free(hist);
         }
         else if (!strcmp(token, "pinfo"))
         {
@@ -76,6 +78,7 @@ void command_process(str command)
                 strcat(hist, token);
             }
             addHist(hist);
+            free(hist);
         }
         else if (!strcmp(token, "ls"))
         {
@@ -92,6 +95,7 @@ void command_process(str command)
             addHist(hist);
 
             ls(no_args, args);
+            free(hist);
         }
         else if (!strcmp(token, "history"))
         {
@@ -106,11 +110,12 @@ void command_process(str command)
                 background(command_copy);
             else
                 foreground(command_copy);
+            addHist(command_copy);
             return;
         }
     }
 
-    free(command_copy);
+    // free(command_copy);
 }
 
 void input()

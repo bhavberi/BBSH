@@ -16,7 +16,7 @@ void setupHist()
 
     while (fgets(line, sizeof(line), fp))
     {
-        localHist.entries[localHist.no_entries] = strdup(line);
+        localHist.entries[localHist.no_entries] = str_copy(line);
         localHist.entries[localHist.no_entries][strlen(line) - 1] = '\n';
         localHist.entries[localHist.no_entries][strlen(line)] = '\0';
         localHist.no_entries++;
@@ -36,7 +36,7 @@ void addHist(str command)
             return;
     }
     localHist.last_added = (localHist.last_added + 1) % MAX_HIST_SIZE;
-    localHist.entries[localHist.last_added] = strdup(command);
+    localHist.entries[localHist.last_added] = str_copy(command);
     localHist.entries[localHist.last_added][strlen(command)] = '\n';
     localHist.entries[localHist.last_added][strlen(command) + 1] = '\0';
     localHist.no_entries = (localHist.no_entries < MAX_HIST_SIZE) ? localHist.no_entries + 1 : localHist.no_entries;
@@ -52,7 +52,8 @@ void writeHist()
 
     for (int j = 0; j < localHist.no_entries; ++j)
     {
-        fputs(localHist.entries[i % MAX_HIST_SIZE], fp);
+        // fputs(localHist.entries[i % MAX_HIST_SIZE], fp);
+        fprintf(fp, "%s", localHist.entries[i % MAX_HIST_SIZE]);
         i++;
     }
     // fputs(localHist.entries[(i + localHist.last_added) % MAX_HIST_SIZE], fp);

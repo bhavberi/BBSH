@@ -12,7 +12,7 @@ str str_copy(str to_copy)
 
 str colour(str colour, str s)
 {
-    str s_new = calloc(strlen(s) + 2 * strlen(RESET) + 1, sizeof(char));
+    str s_new = calloc(strlen(s) + 2 * strlen(RESET) + 3, sizeof(char));
     sprintf(s_new, "%s%s%s", colour, s, RESET);
 
     return s_new;
@@ -34,8 +34,8 @@ str strip(str s)
 
 str_array split(str s1, str delimit, int *token_count)
 {
-    str s = strip(strdup(s1));
-    str token = strtok(strdup(s), delimit);
+    str s = strip(str_copy(s1));
+    str token = strtok(str_copy(s), delimit);
     *token_count = 0;
 
     while (token)
@@ -48,7 +48,7 @@ str_array split(str s1, str delimit, int *token_count)
         token_count--;
 
     str_array tokens = calloc(*token_count, sizeof(str));
-    token = strtok(strdup(s), delimit);
+    token = strtok(str_copy(s), delimit);
 
     for (int i = 0; i < (*token_count); i++)
     {
@@ -80,15 +80,26 @@ str replace(str s, char to_replace, str by_replace)
             new[strlen(new)] = s[i];
     }
 
+    // free(s);
+    s = new;
+
     return new;
 }
 
 int no_of_done = 0;
 
-void main_loop()
+void main_loop(int time_included, ...)
 {
     setbuf(stdout, NULL);
-    printPrompt();
+    if (time_included)
+    {
+        va_list list;
+        va_start(list, time_included);
+        printPrompt_time(va_arg(list, time_t));
+        va_end(list);
+    }
+    else
+        printPrompt();
     input();
 
     if (no_of_done >= 10)

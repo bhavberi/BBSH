@@ -8,7 +8,7 @@ typedef struct JOBPOOL
 {
     pid_t pid;
     str name;
-    clock_t start;
+    time_t start;
     struct JOBPOOL *next;
 } job_pool;
 

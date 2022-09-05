@@ -9,7 +9,7 @@ int main()
 
     while (true)
     {
-        main_loop();
+        main_loop(false);
     }
 
     return 0;

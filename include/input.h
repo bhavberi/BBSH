@@ -3,7 +3,7 @@
 
 #include "libraries.h"
 
-#define INPUTLENGTH_MAX 4096
+#define INPUTLENGTH_MAX 2048
 
 void input();
 
