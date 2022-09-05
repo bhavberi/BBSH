@@ -82,3 +82,19 @@ str replace(str s, char to_replace, str by_replace)
 
     return new;
 }
+
+int no_of_done = 0;
+
+void main_loop()
+{
+    setbuf(stdout, NULL);
+    printPrompt();
+    input();
+
+    // if (no_of_done >= 10)
+    // {
+    writeHist();
+    //     no_of_done = 0;
+    // }
+    fflush(stdout);
+}
