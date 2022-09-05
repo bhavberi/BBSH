@@ -28,7 +28,6 @@ str strip(str s)
         ++s;
         --l;
     }
-    // return strndup(s, l);
     return s;
 }
 
@@ -88,7 +87,7 @@ str replace(str s, char to_replace, str by_replace)
 
 int no_of_done = 0;
 
-void main_loop(int time_included,...)
+void main_loop(int time_included, ...)
 {
     setbuf(stdout, NULL);
     if (time_included)
@@ -100,6 +99,7 @@ void main_loop(int time_included,...)
     }
     else
         printPrompt();
+
     input();
 
     if (no_of_done >= 10)

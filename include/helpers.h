@@ -10,17 +10,4 @@ str_array split(str s1, str delimit, int *token_count);
 str replace(str s, char to_replace, str by_replace);
 void main_loop(int time_included, ...);
 
-// COLOUR CODES
-
-#define BOLD "\e[1m"
-#define RED "\e[31m"
-#define GREEN "\e[32m"
-#define YELLOW "\e[33m"
-#define BLUE "\e[34m"
-#define MAGENTA "\e[35m"
-#define CYAN "\e[36m"
-#define WHITE "\e[37m"
-
-#define RESET "\e[0m"
-
 #endif

@@ -6,11 +6,12 @@ void setupHist()
 {
     localHist.no_entries = 0;
     localHist.entries = calloc(MAX_HIST_SIZE, sizeof(str));
+    assert(localHist.entries != NULL);
     localHist.last_added = -1;
 
     FILE *fp = fopen(HIST_PATH, "r");
     if (!fp)
-        return;
+        errors(false, false, "Couldn't open History File! ");
 
     char line[INPUTLENGTH_MAX] = "0";
 
@@ -46,7 +47,7 @@ void writeHist()
 {
     FILE *fp = fopen(HIST_PATH, "w");
     if (!fp)
-        exit(1);
+        errors(false, false, "Couldn't open History File to write! ");
 
     int i = (localHist.no_entries < MAX_HIST_SIZE) ? 0 : localHist.last_added + 1;
 
@@ -56,7 +57,6 @@ void writeHist()
         fprintf(fp, "%s", localHist.entries[i % MAX_HIST_SIZE]);
         i++;
     }
-    // fputs(localHist.entries[(i + localHist.last_added) % MAX_HIST_SIZE], fp);
 
     fclose(fp);
 }
@@ -65,6 +65,7 @@ void history()
 {
     writeHist();
     setupHist();
+
     int i = (localHist.no_entries < MAX_HIST_SIZE) ? 0 : localHist.last_added + 1;
     int j = (localHist.no_entries < HIST_DISPLAY) ? 0 : localHist.last_added - 9;
 

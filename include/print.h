@@ -7,5 +7,6 @@
 
 void printPrompt();
 void printPrompt_time(str to_print);
+void errors(bool to_exit, bool fatal, str error);
 
 #endif

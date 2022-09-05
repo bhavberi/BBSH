@@ -2,8 +2,8 @@
 
 void command_process(str command)
 {
-    if (!command || !strcmp(command, ""))
-        exit(1);
+    if (!command || !strcmp(command, "") || !strcmp(command, " "))
+        errors(false, false, "Syntax Errors near unexpected tokens! ");
 
     char delimit[] = " \t\r\n\v\f";
 
@@ -20,7 +20,7 @@ void command_process(str command)
         else if (!strcmp(token, "pwd"))
         {
             if (strtok(NULL, delimit))
-                exit(1);
+                errors(false, false, "'pwd' takes only 1 argument ");
             addHist("pwd");
             pwd();
         }
@@ -29,13 +29,16 @@ void command_process(str command)
             str sentence[INPUTLENGTH_MAX];
             int no_words = 0;
             str hist = calloc(INPUTLENGTH_MAX, sizeof(char));
+            assert(hist != NULL);
             strcat(hist, "echo");
+
             while ((token = strtok(NULL, delimit)) != NULL)
             {
                 sentence[no_words++] = token;
                 strcat(hist, " ");
                 strcat(hist, token);
             }
+
             addHist(hist);
             echo(no_words, sentence);
             free(hist);
@@ -52,7 +55,7 @@ void command_process(str command)
             else
             {
                 if (strtok(NULL, delimit))
-                    exit(1);
+                    errors(false, false, "'cd' takes only 1 argument ");
                 cd(token);
                 strcat(hist, " ");
                 strcat(hist, token);
@@ -72,7 +75,7 @@ void command_process(str command)
             else
             {
                 if (strtok(NULL, delimit))
-                    exit(1);
+                    errors(false, false, "'pinfo' takes only 1 argument ");
                 pinfo((int)atoi(token));
                 strcat(hist, " ");
                 strcat(hist, token);
@@ -100,7 +103,7 @@ void command_process(str command)
         else if (!strcmp(token, "history"))
         {
             if (strtok(NULL, delimit))
-                exit(1);
+                errors(false, false, "'pwd' takes no argument/s ");
             history();
             addHist("history");
         }
@@ -108,7 +111,7 @@ void command_process(str command)
         {
             addHist(command_copy);
             writeHist(); // As these processes can change history
-            
+
             if (command_copy[strlen(command_copy) - 1] == '&')
                 background(command_copy);
             else
@@ -137,8 +140,9 @@ void input()
     str command = strtok(in, delimit);
     while (command != NULL)
     {
-        if(!strcmp(command," "))
-            exit(1);
+        if (!strcmp(command, " "))
+            errors(false, false, "Syntax Errors near unexpected tokens! ");
+
         commands[no_commands++] = command;
         // printf("%s-\n", command);
 
@@ -146,9 +150,7 @@ void input()
     }
 
     for (int i = 0; i < no_commands; i++)
-    {
         command_process(commands[i]);
-    }
 
     fflush(stdin);
 }

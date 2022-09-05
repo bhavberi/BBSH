@@ -38,7 +38,10 @@ void cd(str dir)
         dir = get_prev_path();
     }
 
-    chdir(dir);
+    if (chdir(dir))
+    {
+        errors(false, false, "Couldn't change the directory");
+    }
     set_prev_path(prev_path);
 
     if (prefix("..", dir) && strcmp("~", display_path(false)) && !prefix("~", display_path(false)))
@@ -51,18 +54,21 @@ void pinfo(int pid)
         pid = getpid();
 
     str str_pid = malloc((int)(log10(pid) + 4));
+    assert(str_pid != NULL);
     sprintf(str_pid, "%d", pid);
 
     int back_fore = 0;
     str status;
     str memory;
     str exe = calloc(PATHLENGTH_MAX, sizeof(char));
+    assert(exe != NULL);
 
     // https://man7.org/linux/man-pages/man5/proc.5.html
     // https://stackoverflow.com/questions/39066998/what-are-the-meaning-of-values-at-proc-pid-stat
 
     str exe_general_path = "/proc/%d/exe";
     str exe_path = calloc(strlen(exe_general_path) + 10, sizeof(char));
+    assert(exe_path != NULL);
     sprintf(exe_path, exe_general_path, pid);
 
     if (!(readlink(exe_path, exe, PATHLENGTH_MAX) + 1))
@@ -72,13 +78,15 @@ void pinfo(int pid)
 
     str stat_general_path = "/proc/%d/stat";
     str stat_path = calloc(strlen(stat_general_path) + 10, sizeof(char));
+    assert(stat_path != NULL);
     sprintf(stat_path, stat_general_path, pid);
 
     FILE *stat_fp = fopen(stat_path, "r");
     if (!stat_fp)
-        exit(1);
+        errors(true, false, "Couldn't access the /proc/pid/stat File!\nExiting...");
 
     str stat_buf = calloc(STAT_BUF_SIZE, sizeof(char));
+    assert(stat_buf != NULL);
     fread(stat_buf, 1, STAT_BUF_SIZE, stat_fp);
 
     int no_values;
@@ -106,6 +114,7 @@ void ls(int no_words, str args[])
 {
     int dir_count = 0;
     str *dirs = calloc(no_words + 1, sizeof(str));
+    assert(dirs != NULL);
     assert(dirs != NULL);
 
     int a = 0;
@@ -146,7 +155,7 @@ void ls(int no_words, str args[])
         struct dirent *entry;
         DIR *dir = opendir(dirs[i]);
         if (!dir)
-            exit(1);
+            errors(true, false, "Couldn't open the directory to read! ");
 
         int entry_count = 0;
         while (entry = readdir(dir))
@@ -165,6 +174,8 @@ void ls(int no_words, str args[])
         int j = 0;
 
         dir = opendir(dirs[i]);
+        if (!dir)
+            errors(true, false, "Couldn't open the directory to read!");
         while (entry = readdir(dir))
         {
             if (!a && entry->d_name[0] == '.')
@@ -196,23 +207,25 @@ void ls(int no_words, str args[])
                 total_block_size += stats.st_blocks;
 
                 col_entries[j].hls = calloc(33, sizeof(char));
+                assert(col_entries[j].hls != NULL);
                 sprintf(col_entries[j].hls, "%lu", stats.st_nlink);
 
                 col_entries[j].size = calloc(33, sizeof(char));
+                assert(col_entries[j].size != NULL);
                 sprintf(col_entries[j].size, "%ld", stats.st_size);
 
                 str file_modified_format = "%b %d %R";
 
                 if (labs(time(NULL) - stats.st_mtim.tv_sec) > (6 * 2629743))
-                {
                     file_modified_format = "%b %d  %Y";
-                }
 
                 str file_modified = calloc(33, sizeof(char));
+                assert(file_modified != NULL);
                 strftime(file_modified, 33, file_modified_format,
                          localtime((long *)&stats.st_mtim));
 
                 str file_perms = calloc(17, sizeof(char));
+                assert(file_perms != NULL);
                 // sprintf(file_perms, "%s%s%s%s%s%s%s%s%s", (stats.st_mode & S_IRUSR) ? "r" : "-", (stats.st_mode & S_IWUSR) ? "w" : "-", (stats.st_mode & S_IXUSR) ? "x" : "-", (stats.st_mode & S_IRGRP) ? "r" : "-", (stats.st_mode & S_IWGRP) ? "w" : "-", (stats.st_mode & S_IXGRP) ? "x" : "-", (stats.st_mode & S_IROTH) ? "r" : "-", (stats.st_mode & S_IWOTH) ? "w" : "-", (stats.st_mode & S_IXOTH) ? "x" : "-");
 
                 strcat(file_perms, (stats.st_mode & S_IRUSR) ? "r" : "-");
@@ -225,7 +238,7 @@ void ls(int no_words, str args[])
                 strcat(file_perms, (stats.st_mode & S_IWOTH) ? "w" : "-");
                 strcat(file_perms, (stats.st_mode & S_IXOTH) ? "x" : "-");
 
-                char file_link[PATHLENGTH_MAX] = "0";
+                char file_link[PATHLENGTH_MAX] = "\0";
                 if (file_type[0] == 'l')
                 {
                     // file_link = malloc(PATHLENGTH_MAX* sizeof(char));
@@ -238,7 +251,7 @@ void ls(int no_words, str args[])
                 }
 
                 col_entries[j].type_perms = calloc(strlen(file_type) + strlen(file_perms) + 5, sizeof(char));
-                assert(col_entries[j].type_perms);
+                assert(col_entries[j].type_perms != NULL);
                 sprintf(col_entries[j].type_perms, "%s%s", file_type, file_perms);
 
                 str file_name_link = calloc(5 + strlen(col_entries[j].colored_name) + PATHLENGTH_MAX + 5, sizeof(char));
@@ -247,12 +260,10 @@ void ls(int no_words, str args[])
                 strcat(file_name_link, file_type[0] == 'l' ? " -> " : "");
                 strcat(file_name_link, file_link);
 
-                // printf("SOME done %s\n",entry->d_name);
-
                 col_entries[j].owner = getpwuid(stats.st_uid)->pw_name;
                 col_entries[j].group = getpwuid(stats.st_gid)->pw_name;
-
-                // printf("SOME MORE done\n");
+                if (!col_entries[j].group || !col_entries[j].owner)
+                    errors(true, true, "Couldn't find UID!");
 
                 col_entries[j].modified = file_modified;
                 col_entries[j].name_link = file_name_link;
@@ -318,17 +329,17 @@ void foreground(str command)
 
     pid_t pid = fork();
     if (pid < 0)
-        exit(1);
+        errors(true,true,"Couldn't make a foreground fork of process!");
 
     if (pid == 0)
     {
         if (execvp(tokens[0], tokens))
         {
-            str errmsg = calloc(128, sizeof(char));
-            sprintf(errmsg, "%s", tokens[0]);
+            str errmsg = calloc(28+strlen(tokens[0]), sizeof(char));
+            sprintf(errmsg, "Couldn't run the command - %s", tokens[0]);
+            errors(false, true, errmsg);
             free(errmsg);
             // printf("%s,%s,%s\nError: %d\n", tokens[0], tokens[1],tokens[2], pid);
-            exit(1);
         }
         // else
         // {
@@ -365,19 +376,18 @@ void background(str command)
 
     pid_t pid = fork();
     if (pid < 0)
-        exit(1);
+        errors(true, true, "Couldn't make a background fork of process!");
 
     if (pid == 0)
     {
         setpgid(0, 0);
         if (execvp(tokens[0], tokens))
         {
-            str errmsg = calloc(128, sizeof(char));
-            sprintf(errmsg, "%s", tokens[0]);
-            printf("%s\n", errmsg);
+            str errmsg = calloc(28 + strlen(tokens[0]), sizeof(char));
+            sprintf(errmsg, "Couldn't run the command - %s", tokens[0]);
+            errors(false, true, errmsg);
             free(errmsg);
-            // printf("%s,%s,%s\nError: %d\n", tokens[0], tokens[1], tokens[2], pid);
-            exit(1);
+            // printf("%s,%s,%s\nError: %d\n", tokens[0], tokens[1],tokens[2], pid);
         }
         // else
         // {

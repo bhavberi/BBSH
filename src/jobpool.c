@@ -6,6 +6,8 @@ int no_jobs = 0;
 void new_job(pid_t pid, str name)
 {
     jobpool new = calloc(1, sizeof(job_pool));
+    assert(new != NULL);
+
     new->pid = pid;
     new->name = name;
     new->start = time(NULL);
@@ -25,10 +27,10 @@ void ended_job(pid_t pid, int status)
     {
         if (i->pid == pid)
         {
-            printf("\n%s with pid = %d exited %snormally", i->name, i->pid, status ? "" : "ab");
+            fprintf(stderr, "\n%s with pid = %d exited %snormally", i->name, i->pid, status ? "" : "ab");
             time_t end = time(NULL);
             time_t time_spent = (end - i->start);
-            printf(" # After %ld seconds\n", time_spent);
+            fprintf(stderr, " # After %ld seconds\n", time_spent);
             if (prev)
                 prev->next = i->next;
             else

@@ -11,6 +11,7 @@ str long_path(str short_path)
     }
 
     str longpath = calloc(strlen(short_path) + strlen(ROOT_PATH) + 3, sizeof(char));
+    assert(longpath != NULL);
 
     strcat(longpath, ROOT_PATH);
     strcat(longpath, "/");
@@ -30,6 +31,7 @@ str short_path(str long_path)
     }
 
     str shortpath = calloc(PATHLENGTH_MAX, sizeof(char));
+    assert(shortpath != NULL);
     strcat(shortpath, "~");
     strcat(shortpath, long_path + strlen(ROOT_PATH));
 
@@ -42,35 +44,26 @@ str short_path(str long_path)
 str display_path(bool full)
 {
     if (strlen(ROOT_PATH) == 0)
-    {
         set_root_path();
-    }
+
     str path = calloc(PATHLENGTH_MAX, sizeof(char));
+    assert(path != NULL);
 
     if (!getcwd(path, PATHLENGTH_MAX))
-    {
-        exit(1);
-    }
+        errors(false, false, "Couldn't get the Working Directory");
 
     if (full || !prefix(ROOT_PATH, path))
-    {
         return path;
-    }
 
     return short_path(path);
 }
 
 void set_root_path()
 {
-    // if (ROOT_PATH && ROOT_PATH[0] != '\0')
-    //     free(ROOT_PATH);
-
     str path = calloc(PATHLENGTH_MAX, sizeof(char));
 
     if (!getcwd(path, PATHLENGTH_MAX))
-    {
-        exit(1);
-    }
+        errors(false, false, "Couldn't get the Working Directory");
 
     if (ROOT_PATH)
         free(ROOT_PATH);
