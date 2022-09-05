@@ -91,10 +91,10 @@ void main_loop()
     printPrompt();
     input();
 
-    // if (no_of_done >= 10)
-    // {
-    writeHist();
-    //     no_of_done = 0;
-    // }
+    if (no_of_done >= 10)
+    {
+        writeHist();
+        no_of_done = 0;
+    }
     fflush(stdout);
 }

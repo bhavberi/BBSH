@@ -62,6 +62,7 @@ void writeHist()
 
 void history()
 {
+    writeHist();
     setupHist();
     int i = (localHist.no_entries < MAX_HIST_SIZE) ? 0 : localHist.last_added + 1;
     int j = (localHist.no_entries < HIST_DISPLAY) ? 0 : localHist.last_added - 9;
