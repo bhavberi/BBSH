@@ -88,14 +88,14 @@ str replace(str s, char to_replace, str by_replace)
 
 int no_of_done = 0;
 
-void main_loop(int time_included, ...)
+void main_loop(int time_included,...)
 {
     setbuf(stdout, NULL);
     if (time_included)
     {
         va_list list;
         va_start(list, time_included);
-        printPrompt_time(va_arg(list, time_t));
+        printPrompt_time(va_arg(list, str));
         va_end(list);
     }
     else

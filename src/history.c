@@ -12,7 +12,7 @@ void setupHist()
     if (!fp)
         return;
 
-    char line[INPUTLENGTH_MAX];
+    char line[INPUTLENGTH_MAX] = "0";
 
     while (fgets(line, sizeof(line), fp))
     {

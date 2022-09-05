@@ -340,9 +340,12 @@ void foreground(str command)
 
     time_t end = time(NULL);
     long time_spent = end - start;
-    str to_print = calloc(200, sizeof(char));
-    sprintf(to_print, "took %lds", time_spent);
-    main_loop(true, to_print);
+    if (time_spent >= 1)
+    {
+        str to_print = calloc(200, sizeof(char));
+        sprintf(to_print, "took %lds", time_spent);
+        main_loop(true, to_print);
+    }
 }
 
 void background(str command)

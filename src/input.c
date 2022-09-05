@@ -106,11 +106,15 @@ void command_process(str command)
         }
         else
         {
+            addHist(command_copy);
+            writeHist(); // As these processes can change history
+            
             if (command_copy[strlen(command_copy) - 1] == '&')
                 background(command_copy);
             else
                 foreground(command_copy);
-            addHist(command_copy);
+
+            setupHist();
             return;
         }
     }

@@ -8,7 +8,7 @@ str str_copy(str to_copy);
 str colour(str colour, str s);
 str_array split(str s1, str delimit, int *token_count);
 str replace(str s, char to_replace, str by_replace);
-void main_loop();
+void main_loop(int time_included, ...);
 
 // COLOUR CODES
 

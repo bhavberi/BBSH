@@ -28,5 +28,5 @@ void printPrompt()
 void printPrompt_time(str to_print)
 {
     printPrompt();
-    printf("\b\b%s ", colour(BLUE, to_print));
+    printf("\b\b%s> ", colour(BLUE, to_print));
 }
