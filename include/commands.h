@@ -24,5 +24,7 @@ void echo(int no_words, str sentence[]);
 void cd(str dir);
 void pinfo(int pid);
 void ls(int no_words, str args[]);
+void background(str command);
+void foreground(str command);
 
 #endif

@@ -51,7 +51,7 @@ void pinfo(int pid)
         pid = getpid();
 
     str str_pid = malloc((int)(log10(pid) + 4));
-    sprintf(str_pid, "%d", 42);
+    sprintf(str_pid, "%d", pid);
 
     int back_fore = 0;
     str status;
@@ -280,4 +280,79 @@ void ls(int no_words, str args[])
     }
 
     free(dirs);
+}
+
+void foreground(str command)
+{
+    str tokens[INPUTLENGTH_MAX + 1];
+    int no_tokens = 0;
+    char delimit[] = " \n";
+
+    str token = strtok(command, delimit);
+    while (token != NULL)
+    {
+        tokens[no_tokens++] = token;
+        token = strtok(NULL, delimit);
+    }
+    tokens[no_tokens++] = NULL;
+
+    pid_t pid = fork();
+    if (pid < 0)
+        exit(1);
+
+    if (pid == 0)
+    {
+        if (execvp(tokens[0], tokens))
+        {
+            char *errmsg = calloc(128, sizeof(char));
+            sprintf(errmsg, "%s", tokens[0]);
+            // printf("%s,%s,%s\nError: %d\n", tokens[0], tokens[1],tokens[2], pid);
+            exit(1);
+        }
+        else
+        {
+            printf("%s,%s,%s\nError: %d\n", tokens[0], tokens[1], tokens[2], pid);
+        }
+    }
+    else
+        wait(NULL);
+}
+
+void background(str command)
+{
+    str command_copy = command;
+    str tokens[INPUTLENGTH_MAX + 1];
+    int no_tokens = 0;
+    char delimit[] = "& \n";
+
+    str token = strtok(command, delimit);
+    while (token != NULL)
+    {
+        tokens[no_tokens++] = token;
+        token = strtok(NULL, delimit);
+    }
+    tokens[no_tokens++] = NULL;
+
+    pid_t pid = fork();
+    if (pid < 0)
+        exit(1);
+
+    if (pid == 0)
+    {
+        setpgid(0, 0);
+        if (execvp(tokens[0], tokens))
+        {
+            char *errmsg = calloc(128, sizeof(char));
+            sprintf(errmsg, "%s", tokens[0]);
+            printf("%s\n", errmsg);
+            // printf("%s,%s,%s\nError: %d\n", tokens[0], tokens[1], tokens[2], pid);
+            exit(1);
+        }
+        // else
+        // {
+        //     printf("%s,%s,%s\nError: %d\n", tokens[0], tokens[1], tokens[2], pid);
+        // }
+    }
+    else
+        new_job(pid, command_copy);
 }
