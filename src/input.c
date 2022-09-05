@@ -2,9 +2,12 @@
 
 void command_process(str command)
 {
+    if (!strcmp(command, ""))
+        exit(1);
+
     char delimit[] = " \t\r\n\v\f";
 
-    str command1 = strdup(command);
+    str command_copy = strdup(command);
 
     str token = strtok(command, delimit);
 
@@ -14,6 +17,7 @@ void command_process(str command)
         {
             addHist("exit");
             writeHist();
+            // endalljobs();
             exit(0);
         }
         else if (!strcmp(token, "pwd"))
@@ -42,37 +46,39 @@ void command_process(str command)
         {
             token = strtok(NULL, delimit);
 
-            if (strtok(NULL, delimit))
-                exit(1);
-
             str hist = calloc(INPUTLENGTH_MAX, sizeof(char));
             strcat(hist, "cd");
-            strcat(hist, " ");
-            strcat(hist, token);
-            addHist(hist);
 
             if (token == NULL)
                 cd("~");
             else
+            {
+                if (strtok(NULL, delimit))
+                    exit(1);
                 cd(token);
+                strcat(hist, " ");
+                strcat(hist, token);
+            }
+            addHist(hist);
         }
         else if (!strcmp(token, "pinfo"))
         {
             token = strtok(NULL, delimit);
 
-            if (strtok(NULL, delimit))
-                exit(1);
-
             str hist = calloc(INPUTLENGTH_MAX, sizeof(char));
             strcat(hist, "pinfo");
-            strcat(hist, " ");
-            strcat(hist, token);
-            addHist(hist);
 
             if (token == NULL)
                 pinfo(0);
             else
+            {
+                if (strtok(NULL, delimit))
+                    exit(1);
                 pinfo((int)atoi(token));
+                strcat(hist, " ");
+                strcat(hist, token);
+            }
+            addHist(hist);
         }
         else if (!strcmp(token, "ls"))
         {
@@ -99,11 +105,15 @@ void command_process(str command)
         }
         else
         {
+            if (command_copy[strlen(command_copy) - 1] == '&')
+                background(command_copy);
+            else
+                foreground(command_copy);
             return;
         }
     }
 
-    free(command1);
+    free(command_copy);
 }
 
 void input()
@@ -113,6 +123,8 @@ void input()
     int no_commands = 0;
 
     fgets(in, sizeof(in), stdin);
+
+    replace(in, '&', "&;");
 
     char delimit[] = ";\n";
 
