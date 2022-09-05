@@ -26,5 +26,6 @@ void pinfo(int pid);
 void ls(int no_words, str args[]);
 void background(str command);
 void foreground(str command);
+void quit();
 
 #endif

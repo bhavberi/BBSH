@@ -2,7 +2,7 @@
 
 void command_process(str command)
 {
-    if (!strcmp(command, ""))
+    if (!command || !strcmp(command, ""))
         exit(1);
 
     char delimit[] = " \t\r\n\v\f";
@@ -15,10 +15,7 @@ void command_process(str command)
     {
         if (!strcmp(token, "exit") || !strcmp(token, "quit"))
         {
-            addHist("exit");
-            writeHist();
-            // endalljobs();
-            exit(0);
+            quit();
         }
         else if (!strcmp(token, "pwd"))
         {
@@ -131,8 +128,10 @@ void input()
     str command = strtok(in, delimit);
     while (command != NULL)
     {
+        if(!strcmp(command," "))
+            exit(1);
         commands[no_commands++] = command;
-        // printf("%s\n", commands[no_commands]);
+        // printf("%s-\n", command);
 
         command = strtok(NULL, delimit);
     }

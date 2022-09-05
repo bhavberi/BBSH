@@ -356,3 +356,11 @@ void background(str command)
     else
         new_job(pid, command_copy);
 }
+
+void quit()
+{
+    addHist("exit");
+    writeHist();
+    endalljobs();
+    exit(0);
+}
