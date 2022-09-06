@@ -8,6 +8,22 @@ int file_stats_comp(const void *pa, const void *pb)
     return (strcasecmp(a->name, b->name) > 0);
 }
 
+int dirs_comp(const void *pa, const void *pb)
+{
+    str *a = (str *)pa;
+    str *b = (str *)pb;
+
+    str last_file_path = strrchr(*a, '/');
+    str name = last_file_path ? last_file_path + 1 : *a;
+
+    str last_file_path1 = strrchr(*b, '/');
+    str name1 = last_file_path1 ? last_file_path1 + 1 : *b;
+
+    // printf("%s %s - %s %s\n", *a, name, *b, name1);
+
+    return (strcasecmp(name, name1) > 0);
+}
+
 void pwd()
 {
     printf("%s\n", colour(YELLOW, display_path(true)));
@@ -144,6 +160,8 @@ void ls(int no_words, str args[])
         dirs[dir_count] = "./";
         dir_count++;
     }
+    else
+        qsort(dirs, dir_count, sizeof(*dirs), dirs_comp);
 
     for (int i = 0; i < dir_count; i++)
     {
@@ -329,13 +347,13 @@ void foreground(str command)
 
     pid_t pid = fork();
     if (pid < 0)
-        errors(true,true,"Couldn't make a foreground fork of process!");
+        errors(true, true, "Couldn't make a foreground fork of process!");
 
     if (pid == 0)
     {
         if (execvp(tokens[0], tokens))
         {
-            str errmsg = calloc(28+strlen(tokens[0]), sizeof(char));
+            str errmsg = calloc(28 + strlen(tokens[0]), sizeof(char));
             sprintf(errmsg, "Couldn't run the command - %s", tokens[0]);
             errors(false, true, errmsg);
             free(errmsg);
