@@ -100,6 +100,23 @@ void command_process(str command)
             ls(no_args, args);
             free(hist);
         }
+        else if (!strcmp(token, "discover"))
+        {
+            str args[INPUTLENGTH_MAX];
+            int no_args = 0;
+            str hist = calloc(INPUTLENGTH_MAX, sizeof(char));
+            strcat(hist, "discover");
+            while ((token = strtok(NULL, delimit)) != NULL)
+            {
+                args[no_args++] = token;
+                strcat(hist, " ");
+                strcat(hist, token);
+            }
+            addHist(hist);
+
+            discovery(no_args, args);
+            free(hist);
+        }
         else if (!strcmp(token, "history"))
         {
             if (strtok(NULL, delimit))

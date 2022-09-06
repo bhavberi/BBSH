@@ -8,22 +8,6 @@ int file_stats_comp(const void *pa, const void *pb)
     return (strcasecmp(a->name, b->name) > 0);
 }
 
-int dirs_comp(const void *pa, const void *pb)
-{
-    str *a = (str *)pa;
-    str *b = (str *)pb;
-
-    str last_file_path = strrchr(*a, '/');
-    str name = last_file_path ? last_file_path + 1 : *a;
-
-    str last_file_path1 = strrchr(*b, '/');
-    str name1 = last_file_path1 ? last_file_path1 + 1 : *b;
-
-    // printf("%s %s - %s %s\n", *a, name, *b, name1);
-
-    return (strcasecmp(name, name1) > 0);
-}
-
 void pwd()
 {
     printf("%s\n", colour(YELLOW, display_path(true)));

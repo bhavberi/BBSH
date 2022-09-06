@@ -45,5 +45,8 @@ void errors(bool to_exit, bool fatal, str message)
     free(coloured_error);
 
     if (to_exit)
+    {
+        writeHist();
         exit(fatal);
+    }
 }

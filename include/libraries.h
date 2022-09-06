@@ -29,6 +29,7 @@
 #include "history.h"
 #include "signals.h"
 #include "jobpool.h"
+#include "discovery.h"
 
 #ifndef _LIBRARIES_H_
 #define _LIBRARIES_H_
