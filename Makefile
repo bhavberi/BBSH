@@ -28,7 +28,7 @@ full: $(OBJS)
 	@rm -f bbsh.exe
 	@echo Cleaned Files
 
-valgrind:
+valgrind: $(OBJS)
 	@$(CC) $(INC_FLAGS) -g $(OBJS) -lm -o $(TARGET_EXEC)
 	@chmod +x $(TARGET_EXEC)
 	@echo Compiled... Running
