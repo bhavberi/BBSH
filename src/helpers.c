@@ -85,6 +85,22 @@ str replace(str s, char to_replace, str by_replace)
     return new;
 }
 
+int dirs_comp(const void *pa, const void *pb)
+{
+    str *a = (str *)pa;
+    str *b = (str *)pb;
+
+    str last_file_path = strrchr(*a, '/');
+    str name = last_file_path ? last_file_path + 1 : *a;
+
+    str last_file_path1 = strrchr(*b, '/');
+    str name1 = last_file_path1 ? last_file_path1 + 1 : *b;
+
+    // printf("%s %s - %s %s\n", *a, name, *b, name1);
+
+    return (strcasecmp(name, name1) > 0);
+}
+
 int no_of_done = 0;
 
 void main_loop(int time_included, ...)

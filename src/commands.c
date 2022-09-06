@@ -131,7 +131,6 @@ void ls(int no_words, str args[])
     int dir_count = 0;
     str *dirs = calloc(no_words + 1, sizeof(str));
     assert(dirs != NULL);
-    assert(dirs != NULL);
 
     int a = 0;
     int l = 0;
