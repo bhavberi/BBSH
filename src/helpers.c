@@ -101,6 +101,14 @@ int dirs_comp(const void *pa, const void *pb)
     return (strcasecmp(name, name1) > 0);
 }
 
+int files_comp(const void *pa, const void *pb)
+{
+    str *a = (str *)pa;
+    str *b = (str *)pb;
+
+    return (strcasecmp(*a, *b) > 0);
+}
+
 int no_of_done = 0;
 
 void main_loop(int time_included, ...)

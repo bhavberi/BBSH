@@ -9,6 +9,7 @@ str colour(str colour, str s);
 str_array split(str s1, str delimit, int *token_count);
 str replace(str s, char to_replace, str by_replace);
 int dirs_comp(const void *pa, const void *pb);
+int files_comp(const void *pa, const void *pb);
 void main_loop(int time_included, ...);
 
 #endif

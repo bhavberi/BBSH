@@ -87,7 +87,7 @@ void discovery(int no_words, str args[])
         dir = ".";
 
     discovery_rec(dir);
-    qsort(results, results_iter, sizeof(*results), dirs_comp);
+    qsort(results, results_iter, sizeof(*results), files_comp);
 
     for (int i = 0; i < results_iter; ++i)
     {
