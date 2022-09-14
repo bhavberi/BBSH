@@ -401,6 +401,7 @@ void background(str command)
 
 void quit()
 {
+    printf("\n");
     addHist("exit");
     writeHist();
     endalljobs();

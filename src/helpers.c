@@ -1,6 +1,6 @@
 #include "libraries.h"
 
-bool prefix(const char *pre, const char *s)
+bool prefix(const str pre, const str s)
 {
     return strncmp(pre, s, strlen(pre)) == 0;
 }
@@ -28,7 +28,7 @@ str strip(str s)
         ++s;
         --l;
     }
-    return s;
+    return strndup(s, l);
 }
 
 str_array split(str s1, str delimit, int *token_count)
@@ -132,4 +132,71 @@ void main_loop(int time_included, ...)
         no_of_done = 0;
     }
     fflush(stdout);
+}
+
+// open file, assign fd for redirecting from/to it, return command
+str redirect(str command, int *in_fd, int *out_fd)
+{
+    str start = command;
+    str end = strrchr(command, '\0');
+
+    // output redirection
+    str out_ptr = strchr(command, '>');
+    if (!(long long)out_ptr)
+        out_ptr = end;
+
+    // input redirection
+    str in_ptr = strchr(command, '<');
+    if (!(long long)in_ptr)
+        in_ptr = start;
+
+    // reassign output fd
+    if (out_ptr++ != strrchr(command, '\0'))
+    {
+        int append = (out_ptr[0] == '>');
+        out_ptr += append;
+
+        int out_size = end - out_ptr;
+        str out_path = calloc(out_size, sizeof(char));
+        strncpy(out_path, strip(out_ptr), out_size);
+
+        if (!append)
+            fclose(fopen(strip(out_path), "w"));
+
+        *out_fd = open(strip(out_path), O_WRONLY | O_CREAT | (append ? O_APPEND : 0), 0644);
+        if (*out_fd < 0)
+        {
+            errors(0, 1, "Can't Redirect Files");
+            return NULL;
+        }
+
+        // reassign end of command pointer
+        end = out_ptr - (1 + append);
+    }
+
+    // reassign input fd
+    if (in_ptr++ != command)
+    {
+        int in_size = out_ptr - in_ptr - 2;
+        str in_path = calloc(in_size, sizeof(char));
+        strncpy(in_path, strip(in_ptr), in_size);
+        strip(in_path);
+
+        *in_fd = open(strip(in_path), O_RDONLY, 0644);
+        if (*in_fd < 0)
+        {
+            errors(0, 1, "Can't Redirect Files");
+            return NULL;
+        }
+
+        // reassign end of command pointer
+        end = in_ptr - 1;
+    }
+
+    // regenerate command
+    int new_command_size = end - start;
+    str new_command = calloc(new_command_size, sizeof(char));
+    strncpy(new_command, strip(start), (end - start));
+
+    return new_command;
 }

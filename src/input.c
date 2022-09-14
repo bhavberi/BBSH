@@ -1,6 +1,6 @@
 #include "libraries.h"
 
-void command_process(str command)
+void command_process(str command, int in_fd, int out_fd)
 {
     if (!command || !strcmp(command, "") || !strcmp(command, " "))
         errors(false, false, "Syntax Errors near unexpected tokens! ");
@@ -142,8 +142,9 @@ void command_process(str command)
     // free(command_copy);
 }
 
-void pipe_process(str command)
+void io_process(str command)
 {
+    int failure = 0;
     int no_of_pipes;
     str_array pipe_split = split(command, "|", &no_of_pipes);
     int pipe_fds[2][2];
@@ -159,6 +160,47 @@ void pipe_process(str command)
             errors(true, true, "Error in accessing pipe");
 
         str command = strip(pipe_split[i]);
+        int in_fd = STDIN_FILENO;
+        int out_fd = STDOUT_FILENO;
+
+        // if not redirecting input/output, receive/send from/to previous/next pipe
+        if (!strchr(command, '<') && i)
+        {
+            in_fd = pipe_fds[!(i % 2)][READ];
+            if (failure)
+                close(pipe_fds[!(i % 2)][WRITE]);
+        }
+        if (!strchr(command, '>') && (i + 1 < no_of_pipes))
+        {
+            out_fd = pipe_fds[i % 2][WRITE];
+        }
+
+        failure = 0;
+        command = redirect(command, &in_fd, &out_fd);
+        if (!command)
+        {
+            failure = 1;
+            continue;
+        }
+
+        // printf("%s\n", command);
+        int stdin_bkp = dup(STDIN_FILENO);
+        int stdout_bkp = dup(STDOUT_FILENO);
+
+        dup2(in_fd, STDIN_FILENO);
+        dup2(out_fd, STDOUT_FILENO);
+
+        command_process(command, in_fd, out_fd);
+
+        if (in_fd != STDIN_FILENO)
+            close(in_fd);
+        if (out_fd != STDOUT_FILENO)
+            close(out_fd);
+
+        dup2(stdin_bkp, STDIN_FILENO);
+        dup2(stdout_bkp, STDOUT_FILENO);
+        close(stdin_bkp);
+        close(stdout_bkp);
     }
 }
 
@@ -187,7 +229,7 @@ void input()
     }
 
     for (int i = 0; i < no_commands; i++)
-        command_process(commands[i]);
+        io_process(commands[i]);
 
     fflush(stdin);
 }

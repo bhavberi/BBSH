@@ -21,7 +21,9 @@ $(OBJS_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(BUILD_DIR) $(OBJS_DIR)
 	@$(CC) $(INC_FLAGS) -lm -c $< -o $@
 
-full: $(OBJS)
+full:
+	@rm -rf ./build
+	@rm -f bbsh.exe
 	@make bbsh
 	
 	@rm -rf ./build
