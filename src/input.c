@@ -5,7 +5,7 @@ void command_process(str command)
     if (!command || !strcmp(command, "") || !strcmp(command, " "))
         errors(false, false, "Syntax Errors near unexpected tokens! ");
 
-    char delimit[] = " \t\r\n\v\f";
+    char delimit[] = " \r\n\v\f";
 
     str command_copy = str_copy(command);
 
@@ -140,6 +140,26 @@ void command_process(str command)
     }
 
     // free(command_copy);
+}
+
+void pipe_process(str command)
+{
+    int no_of_pipes;
+    str_array pipe_split = split(command, "|", &no_of_pipes);
+    int pipe_fds[2][2];
+    enum pipe_actions
+    {
+        READ,
+        WRITE
+    };
+
+    for (int i = 0; i < no_of_pipes; ++i)
+    {
+        if (pipe(pipe_fds[i % 2]) == -1)
+            errors(true, true, "Error in accessing pipe");
+
+        str command = strip(pipe_split[i]);
+    }
 }
 
 void input()
