@@ -1,6 +1,6 @@
-# **BB-SHELL [_BBSH_ ]** (_V1.0_ )
+# **BB-SHELL [_BBSH_ ]** (_V1.3_ )
 
-_Made for an assignment for OS&N Course Monsoon 2022-23._
+_Made for an assignment/s for OS&N Course Monsoon 2022-23._
 
 _Completely coded in `C`._
 
@@ -22,6 +22,7 @@ It has some of the following features as of now:- (More may ~~not~~ come later)
 - Can run both `background` qand `foreground` processes. (For any other shell commands)
 - Multiple Command Execution in a single line using `;`.
 - `exit` is used to exit the shell.
+- I/O Redirection using pipes and < & >/>>.
 
 ### OTHER COMMANDS & INSTRUCTIONS
 - #### `cd`
@@ -90,7 +91,7 @@ It has some of the following features as of now:- (More may ~~not~~ come later)
 
 1. `main.c` -> Containing the parent code to run the shell. Just mainly calling different functions.
 2. `libraries.h` -> Containing all the imports and in general definitions.
-3. `input.c` and `input.h` -> Containing the functions to take input, process it and do tasks based on that.
+3. `input.c` and `input.h` -> Containing the functions to take input, process it and do tasks based on that. Also, handles the I/O Redirection processes.
 4. `print.c` and `print.h` -> Containing the code to print prompt, errors, etc.
 5. `signals.c` and `signals.h` -> Containing the functions to handle different basic signals and process them accordingly.
 6. `path.c` and `path.h` -> Containing the functions to process different directories and paths.
