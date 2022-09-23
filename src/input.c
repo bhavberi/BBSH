@@ -148,6 +148,7 @@ void command_process(str command, int in_fd, int out_fd)
         {
             str hist = calloc(INPUTLENGTH_MAX, sizeof(char));
             strcat(hist, "sig");
+            strcat(hist, " ");
 
             str temp;
 
@@ -165,6 +166,7 @@ void command_process(str command, int in_fd, int out_fd)
                 return;
             }
             strcat(hist, token);
+            strcat(hist, " ");
 
             token = strtok(NULL, delimit);
             if (!token || strtok(NULL, delimit))
@@ -188,13 +190,19 @@ void command_process(str command, int in_fd, int out_fd)
         }
         else
         {
-            addHist(command_copy);
             writeHist(); // As these processes can change history
 
             if (command_copy[strlen(command_copy) - 1] == '&')
+            {
                 background(command_copy);
+                addHist(strndup(command_copy, strlen(command_copy) - 1));
+                free(command_copy);
+            }
             else
+            {
                 foreground(command_copy);
+                addHist(command_copy);
+            }
 
             setupHist();
             return;

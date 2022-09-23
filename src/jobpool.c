@@ -42,6 +42,7 @@ void ended_job(pid_t pid, int status)
                 jobs = i->next;
             
             // no_jobs--;
+            free(i->name);
             free(i);
             break;
         }
@@ -59,6 +60,7 @@ void endalljobs()
         killpg(i->pid, SIGKILL);
         prev = i;
         i = i->next;
+        free(prev->name);
         free(prev);
     }
     no_jobs = 0;

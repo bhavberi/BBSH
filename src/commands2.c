@@ -50,7 +50,7 @@ void foreground(str command)
 
 void background(str command)
 {
-    str command_copy = command;
+    str command_copy = strndup(command, strlen(command) - 1);
     str tokens[INPUTLENGTH_MAX + 1];
     int no_tokens = 0;
     char delimit[] = "& \n";
