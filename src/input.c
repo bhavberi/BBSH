@@ -15,6 +15,7 @@ void command_process(str command, int in_fd, int out_fd)
     {
         if (!strcmp(token, "exit") || !strcmp(token, "quit"))
         {
+            addHist(token);
             quit();
         }
         else if (!strcmp(token, "pwd"))
@@ -210,7 +211,8 @@ void input()
     str commands[INPUTLENGTH_MAX];
     int no_commands = 0;
 
-    fgets(in, sizeof(in), stdin);
+    if(!fgets(in, sizeof(in), stdin))
+        check_ctrl_d();
 
     replace(in, '&', "&;");
 

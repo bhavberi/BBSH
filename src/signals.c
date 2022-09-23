@@ -10,22 +10,23 @@ void handle_signal()
     sigaction(SIGCHLD, &action, NULL);
 
     memset(&action, 0, sizeof(action));
-    action.sa_handler = ignore;
+    action.sa_handler = interrupt;
     action.sa_flags = SA_RESTART;
     sigaction(SIGINT, &action, NULL);
 
     signal(SIGTSTP, SIG_IGN);
 }
 
-void ignore()
+void interrupt(int _)
 {
     printf("\n");
     printPrompt();
+    main_loop(false);
     fflush(stdout);
     return;
 }
 
-void child_process_end()
+void child_process_end(int _)
 {
     pid_t pid;
     int status;
@@ -36,5 +37,16 @@ void child_process_end()
         ended_job(pid, status);
         printPrompt();
         fflush(stdout);
+    }
+}
+
+void check_ctrl_d()
+{
+    if (feof(stdin))
+    {
+        fprintf(stdout, "SHELL EXIT\n");
+        fflush(stdout);
+        fflush(stdin);
+        quit();
     }
 }

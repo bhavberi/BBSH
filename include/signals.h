@@ -4,7 +4,8 @@
 #include "libraries.h"
 
 void handle_signal();
-void ignore();
-void child_process_end();
+void interrupt(int _);
+void child_process_end(int _);
+void check_ctrl_d();
 
 #endif
