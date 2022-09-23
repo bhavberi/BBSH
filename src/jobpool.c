@@ -6,7 +6,7 @@ int no_jobs = 0;
 void new_job(pid_t pid, str name)
 {
     jobpool new = calloc(1, sizeof(job_pool));
-    if(new==NULL)
+    if (new == NULL)
         errors(true, true, "Can't allocate Memory for JobPool.");
 
     new->pid = pid;
@@ -30,14 +30,18 @@ void ended_job(pid_t pid, int status)
         if (i->pid == pid)
         {
             fprintf(stderr, "\n%s with pid = %d exited %snormally", i->name, i->pid, status ? "" : "ab");
+            
             time_t end = time(NULL);
             time_t time_spent = (end - i->start);
+
             fprintf(stderr, " # After %ld seconds\n", time_spent);
+            
             if (prev)
                 prev->next = i->next;
             else
                 jobs = i->next;
-            no_jobs--;
+            
+            // no_jobs--;
             free(i);
             break;
         }
@@ -58,4 +62,18 @@ void endalljobs()
         free(prev);
     }
     no_jobs = 0;
+}
+
+pid_t get_job_pid(int id)
+{
+    jobpool job = jobs;
+
+    while (job)
+    {
+        if (job->id == id)
+            return job->pid;
+        job = job->next;
+    }
+
+    return -1;
 }

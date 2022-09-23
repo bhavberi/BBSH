@@ -18,5 +18,6 @@ typedef job_pool *jobpool;
 void new_job(pid_t pid, str name);
 void ended_job(pid_t pid, int status);
 void endalljobs();
+pid_t get_job_pid(int id);
 
 #endif

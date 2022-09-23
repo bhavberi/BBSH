@@ -94,3 +94,25 @@ void quit()
     endalljobs();
     exit(0);
 }
+
+void send_signal(int id, int signal)
+{
+    pid_t pid = get_job_pid(id);
+    if (pid == -1)
+    {
+        errors(false, false, "Unable to find the process with the given id.");
+        return;
+    }
+
+    if (kill(pid, signal))
+    {
+        str errorMessage = "Unable to send %d signal to process with pid=%d & id=%d";
+        str error = malloc((strlen(errorMessage) + sizeof(int) * 3 + 3) * sizeof(char));
+        assert(error != NULL);
+
+        sprintf(error, errorMessage, signal, pid, id);
+        errors(false, false, error);
+        if (error)
+            free(error);
+    }
+}

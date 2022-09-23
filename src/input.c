@@ -3,7 +3,10 @@
 void command_process(str command, int in_fd, int out_fd)
 {
     if (!command || !strcmp(command, "") || !strcmp(command, " "))
+    {
         errors(false, false, "Syntax Errors near unexpected tokens! ");
+        return;
+    }
 
     char delimit[] = " \r\n\v\f";
 
@@ -21,7 +24,10 @@ void command_process(str command, int in_fd, int out_fd)
         else if (!strcmp(token, "pwd"))
         {
             if (strtok(NULL, delimit))
+            {
                 errors(false, false, "'pwd' takes only 1 argument ");
+                return;
+            }
             addHist("pwd");
             pwd();
         }
@@ -56,7 +62,11 @@ void command_process(str command, int in_fd, int out_fd)
             else
             {
                 if (strtok(NULL, delimit))
+                {
                     errors(false, false, "'cd' takes only 1 argument ");
+                    free(hist);
+                    return;
+                }
                 cd(token);
                 strcat(hist, " ");
                 strcat(hist, token);
@@ -76,7 +86,11 @@ void command_process(str command, int in_fd, int out_fd)
             else
             {
                 if (strtok(NULL, delimit))
+                {
                     errors(false, false, "'pinfo' takes only 1 argument ");
+                    free(hist);
+                    return;
+                }
                 pinfo((int)atoi(token));
                 strcat(hist, " ");
                 strcat(hist, token);
@@ -90,6 +104,7 @@ void command_process(str command, int in_fd, int out_fd)
             int no_args = 0;
             str hist = calloc(INPUTLENGTH_MAX, sizeof(char));
             strcat(hist, "ls");
+
             while ((token = strtok(NULL, delimit)) != NULL)
             {
                 args[no_args++] = token;
@@ -107,6 +122,7 @@ void command_process(str command, int in_fd, int out_fd)
             int no_args = 0;
             str hist = calloc(INPUTLENGTH_MAX, sizeof(char));
             strcat(hist, "discover");
+
             while ((token = strtok(NULL, delimit)) != NULL)
             {
                 args[no_args++] = token;
@@ -121,9 +137,54 @@ void command_process(str command, int in_fd, int out_fd)
         else if (!strcmp(token, "history"))
         {
             if (strtok(NULL, delimit))
-                errors(false, false, "'pwd' takes no argument/s ");
+            {
+                errors(false, false, "'history' takes no argument/s ");
+                return;
+            }
             history();
             addHist("history");
+        }
+        else if (!strcmp(token, "sig"))
+        {
+            str hist = calloc(INPUTLENGTH_MAX, sizeof(char));
+            strcat(hist, "sig");
+
+            str temp;
+
+            token = strtok(NULL, delimit);
+            if (!token)
+            {
+                errors(false, false, "Argument/s not appropriate");
+                return;
+            }
+
+            int id = (int)strtol(token, &temp, 10);
+            if (temp == token)
+            {
+                errors(false, false, "Argument/s not appropriate");
+                return;
+            }
+            strcat(hist, token);
+
+            token = strtok(NULL, delimit);
+            if (!token || strtok(NULL, delimit))
+            {
+                errors(false, false, "Argument/s not appropriate");
+                return;
+            }
+
+            int signal = (int)strtol(token, &temp, 10);
+            if (temp == token)
+            {
+                errors(false, false, "Argument/s not appropriate");
+                return;
+            }
+            strcat(hist, token);
+
+            send_signal(id, signal);
+
+            addHist(hist);
+            free(hist);
         }
         else
         {
@@ -211,7 +272,7 @@ void input()
     str commands[INPUTLENGTH_MAX];
     int no_commands = 0;
 
-    if(!fgets(in, sizeof(in), stdin))
+    if (!fgets(in, sizeof(in), stdin))
         check_ctrl_d();
 
     replace(in, '&', "&;");
@@ -222,7 +283,10 @@ void input()
     while (command != NULL)
     {
         if (!strcmp(command, " "))
+        {
             errors(false, false, "Syntax Errors near unexpected tokens! ");
+            return;
+        }
 
         commands[no_commands++] = command;
         // printf("%s-\n", command);
