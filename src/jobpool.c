@@ -6,17 +6,19 @@ int no_jobs = 0;
 void new_job(pid_t pid, str name)
 {
     jobpool new = calloc(1, sizeof(job_pool));
-    assert(new != NULL);
+    if(new==NULL)
+        errors(true, true, "Can't allocate Memory for JobPool.");
 
     new->pid = pid;
     new->name = name;
     new->start = time(NULL);
-
     new->next = jobs;
-    jobs = new;
 
     ++no_jobs;
     printf("[%d] %d\n", no_jobs, pid);
+    new->id = no_jobs;
+
+    jobs = new;
 }
 
 void ended_job(pid_t pid, int status)

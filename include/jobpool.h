@@ -6,6 +6,7 @@
 // defining jobpool as linked list
 typedef struct JOBPOOL
 {
+    int id;
     pid_t pid;
     str name;
     time_t start;

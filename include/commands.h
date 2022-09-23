@@ -19,11 +19,14 @@ typedef struct filestats
 
 } file_stats;
 
+// commands1.c
 void pwd();
 void echo(int no_words, str sentence[]);
 void cd(str dir);
 void pinfo(int pid);
 void ls(int no_words, str args[]);
+
+// commands2.c
 void background(str command);
 void foreground(str command);
 void quit();

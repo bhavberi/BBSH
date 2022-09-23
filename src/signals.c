@@ -21,7 +21,6 @@ void interrupt(int _)
 {
     printf("\n");
     printPrompt();
-    main_loop(false);
     fflush(stdout);
     return;
 }
