@@ -116,3 +116,8 @@ void send_signal(int id, int signal)
             free(error);
     }
 }
+
+void bg(int id)
+{
+    send_signal(id, SIGCONT);
+}

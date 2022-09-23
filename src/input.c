@@ -208,6 +208,33 @@ void command_process(str command, int in_fd, int out_fd)
             addHist(hist);
             free(hist);
         }
+        else if (!strcmp(token, "bg"))
+        {
+            str hist = calloc(INPUTLENGTH_MAX, sizeof(char));
+            strcat(hist, token);
+            strcat(hist, " ");
+
+            token = strtok(NULL, delimit);
+            if (strtok(NULL, delimit))
+            {
+                errors(false, false, "Argument/s not appropriate");
+                return;
+            }
+
+            str temp;
+            int id = (int)strtol(token, &temp, 10);
+            if (temp == token)
+            {
+                errors(false, false, "Argument/s not appropriate");
+                return;
+            }
+            strcat(hist, token);
+
+            bg(id);
+
+            addHist(hist);
+            free(hist);
+        }
         else
         {
             writeHist(); // As these processes can change history
