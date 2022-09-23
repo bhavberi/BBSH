@@ -188,6 +188,26 @@ void command_process(str command, int in_fd, int out_fd)
             addHist(hist);
             free(hist);
         }
+        else if (!strcmp(token, "jobs"))
+        {
+            str sentence[INPUTLENGTH_MAX];
+            int no_words = 0;
+            str hist = calloc(INPUTLENGTH_MAX, sizeof(char));
+            assert(hist != NULL);
+            strcat(hist, "jobs");
+
+            while ((token = strtok(NULL, delimit)) != NULL)
+            {
+                sentence[no_words++] = token;
+                strcat(hist, " ");
+                strcat(hist, token);
+            }
+
+            print_bg_jobs(no_words, sentence);
+
+            addHist(hist);
+            free(hist);
+        }
         else
         {
             writeHist(); // As these processes can change history

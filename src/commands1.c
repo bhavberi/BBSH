@@ -83,7 +83,10 @@ void pinfo(int pid)
 
     FILE *stat_fp = fopen(stat_path, "r");
     if (!stat_fp)
+    {
         errors(true, false, "Couldn't access the /proc/pid/stat File!\nExiting...");
+        return;
+    }
 
     str stat_buf = calloc(STAT_BUF_SIZE, sizeof(char));
     assert(stat_buf != NULL);
