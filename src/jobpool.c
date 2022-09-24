@@ -27,7 +27,7 @@ void new_job(pid_t pid, str name)
     jobs = new;
 }
 
-void ended_job(pid_t pid, int status)
+void ended_job(pid_t pid, int status, bool to_print)
 {
     jobpool i = jobs;
     jobpool prev = NULL;
@@ -35,12 +35,14 @@ void ended_job(pid_t pid, int status)
     {
         if (i->pid == pid)
         {
-            fprintf(stderr, "\n%s with pid = %d exited %snormally", i->name, i->pid, status ? "" : "ab");
-
             time_t end = time(NULL);
             time_t time_spent = (end - i->start);
 
-            fprintf(stderr, " # After %ld seconds\n", time_spent);
+            if (to_print == true)
+            {
+                fprintf(stderr, "\n%s with pid = %d exited %snormally", i->name, i->pid, status ? "" : "ab");
+                fprintf(stderr, " # After %ld seconds\n", time_spent);
+            }
 
             if (prev)
                 prev->next = i->next;
@@ -84,6 +86,20 @@ pid_t get_job_pid(int id)
     }
 
     return -1;
+}
+
+str get_job_name(int id)
+{
+    jobpool job = jobs;
+
+    while (job)
+    {
+        if (job->id == id)
+            return job->name;
+        job = job->next;
+    }
+
+    return NULL;
 }
 
 void print_bg_jobs(int no_words, str args[])
@@ -164,4 +180,23 @@ void print_bg_jobs(int no_words, str args[])
         if (s && !jobslist[i].running)
             printf("[%d] Stopped %s [%d]\n", jobslist[i].id, strip(jobslist[i].name), jobslist[i].pid);
     }
+}
+
+void newfgjob(pid_t pid, str name, time_t start)
+{
+    fg = calloc(1, sizeof(job_pool));
+    if (fg == NULL)
+        errors(true, true, "Can't allocate Memory for JobPool.");
+
+    fg->pid = pid;
+    fg->name = name;
+    fg->start = (start) ? start : time(NULL);
+    fg->next = jobs;
+    fg->id = -1;
+}
+
+void endfgjob()
+{
+    free(fg);
+    fg = NULL;
 }

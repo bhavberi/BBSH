@@ -230,7 +230,34 @@ void command_process(str command, int in_fd, int out_fd)
             }
             strcat(hist, token);
 
-            bg(id);
+            bg_run(id);
+
+            addHist(hist);
+            free(hist);
+        }
+        else if (!strcmp(token, "fg"))
+        {
+            str hist = calloc(INPUTLENGTH_MAX, sizeof(char));
+            strcat(hist, token);
+            strcat(hist, " ");
+
+            token = strtok(NULL, delimit);
+            if (strtok(NULL, delimit))
+            {
+                errors(false, false, "Argument/s not appropriate");
+                return;
+            }
+
+            str temp;
+            int id = (int)strtol(token, &temp, 10);
+            if (temp == token)
+            {
+                errors(false, false, "Argument/s not appropriate");
+                return;
+            }
+            strcat(hist, token);
+
+            fg_run(id);
 
             addHist(hist);
             free(hist);
@@ -323,12 +350,15 @@ void io_process(str command)
 
 void input()
 {
-    char in[INPUTLENGTH_MAX];
+    // char in[INPUTLENGTH_MAX];
+    str in;
     str commands[INPUTLENGTH_MAX];
     int no_commands = 0;
 
-    if (!fgets(in, sizeof(in), stdin))
-        check_ctrl_d();
+    // if (!fgets(in, sizeof(in), stdin))
+    //     check_ctrl_d();
+
+    in = get_raw_input();
 
     replace(in, '&', "&;");
 

@@ -31,6 +31,7 @@ void background(str command);
 void foreground(str command);
 void quit();
 void send_signal(int id, int signal);
-void bg(int id);
+void bg_run(int id);
+void fg_run(int id);
 
 #endif

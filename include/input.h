@@ -5,6 +5,7 @@
 
 #define INPUTLENGTH_MAX 2048
 
+str get_raw_input();
 void input();
 
 #endif
