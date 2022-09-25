@@ -1,7 +1,5 @@
 #include "libraries.h"
 
-#define MAX_FILES_DIRS 1024
-
 int d, f;
 str name_comp = NULL;
 

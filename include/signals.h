@@ -7,5 +7,6 @@ void handle_signal();
 void interrupt(int _);
 void child_process_end(int _);
 void check_ctrl_d();
+void fg_to_bg(int _);
 
 #endif

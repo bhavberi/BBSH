@@ -53,6 +53,7 @@ void foreground(str command)
         sprintf(to_print, "took %lds", time_spent);
         main_loop(true, to_print);
     }
+    printf("\n");
 }
 
 void background(str command)
