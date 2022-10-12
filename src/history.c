@@ -9,7 +9,7 @@ void setupHist()
     assert(localHist.entries != NULL);
     localHist.last_added = -1;
 
-    FILE *fp = fopen(HIST_PATH, "r");
+    FILE *fp = fopen(HIST_PATH, "a+");
     if (!fp)
         errors(false, false, "Couldn't open History File! ");
 
