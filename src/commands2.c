@@ -29,6 +29,10 @@ void foreground(str command)
             sprintf(errmsg, "Couldn't run the command - %s", tokens[0]);
             errors(false, true, errmsg);
             free(errmsg);
+            
+            writeHist();
+            endalljobs();
+            exit(0);
             // printf("%s,%s,%s\nError: %d\n", tokens[0], tokens[1],tokens[2], pid);
         }
         // else
@@ -53,7 +57,7 @@ void foreground(str command)
         sprintf(to_print, "took %lds", time_spent);
         main_loop(true, to_print);
     }
-    printf("\n");
+    // printf("\n");
 }
 
 void background(str command)

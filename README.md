@@ -117,7 +117,7 @@ It has some of the following features as of now:- (More may ~~not~~ come later)
 5. `print.c` and `print.h` -> Containing the code to print prompt, errors, etc.
 6. `signals.c` and `signals.h` -> Containing the functions to handle different basic signals and process them accordingly.
 7. `path.c` and `path.h` -> Containing the functions to process different directories and paths.
-8. `history.c` and `history.h` -> Reading, Processing and Writing History.
+8. `history.c` and `history.h` -> Reading, Processing and Writing History. If want to change the path of the history file, you can use this `history.h` file.
 9. `discovery.c` and `discovery.h` -> Handles the code for `discovery` command and its variants.
 10. `jobpool.c` and `jobpool.h` -> Manages the current running processes in the shell, along with doing book-keeping for the background processes.
 11. `helpers.c` and `helpers.h` -> Some basic functions for using at different places.

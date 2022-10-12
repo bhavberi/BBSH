@@ -126,11 +126,12 @@ void main_loop(int time_included, ...)
 
     input();
 
-    if (no_of_done >= 10)
-    {
-        writeHist();
-        no_of_done = 0;
-    }
+    // if (no_of_done >= 10)
+    // {
+    //     writeHist();
+    //     no_of_done = 0;
+    // }
+    writeHist();
     fflush(stdout);
 }
 
