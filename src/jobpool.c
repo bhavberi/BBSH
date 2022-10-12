@@ -49,7 +49,7 @@ void ended_job(pid_t pid, int status, bool to_print)
             else
                 jobs = i->next;
 
-            // no_jobs--;
+            no_jobs--;
             free(i->name);
             free(i);
             break;
